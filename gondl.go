@@ -13,18 +13,26 @@ import (
 	"strconv"
 )
 
-const version = "0.1.0"
+const version = "0.1.1"
 
 func main() {
 	arguments, _ := docopt.Parse(usage, nil, true, version, false)
+	config := loadConfig("config.json")
+	arguments = merge(arguments, config)
 
 	switch {
+	case arguments["--config"] != false:
+		makeConfig()
 	case arguments["get"] != false:
 		getSymbol(arguments)
 	case arguments["list"] != false:
 		getList(arguments)
 	case arguments["search"] != false:
 		getSearch(arguments)
+	}
+
+	if arguments["--debug"].(bool) {
+		showArgs(arguments)
 	}
 }
 
@@ -50,9 +58,7 @@ func getSymbol(a map[string]interface{}) {
 	panicon(err)
 
 	output(a, result, format)
-	if showUrl {
-		fmt.Println("Quandl URL:", quandl.LastUrl)
-	}
+	showQuandlUrl(showUrl, quandl.LastUrl)
 }
 
 // getList downloads list of symbols for a given source
@@ -69,9 +75,7 @@ func getList(a map[string]interface{}) {
 	panicon(err)
 
 	output(a, result, format)
-	if showUrl {
-		fmt.Println("Quandl URL:", quandl.LastUrl)
-	}
+	showQuandlUrl(showUrl, quandl.LastUrl)
 }
 
 // getSearch downloads search results given query and
@@ -92,9 +96,12 @@ func getSearch(a map[string]interface{}) {
 	panicon(err)
 
 	output(a, result, format)
-	if showUrl {
-		fmt.Println("Quandl URL:", quandl.LastUrl)
-	}
+	showQuandlUrl(showUrl, quandl.LastUrl)
+}
+
+// makeConfig creates a default config.json template file
+func makeConfig() {
+	ioutil.WriteFile("config.json", []byte(configTemplate), 0644)
 }
 
 // getOptions converts command line flags to quandl query string options
@@ -143,12 +150,49 @@ func quandlSetup(a map[string]interface{}) {
 	}
 }
 
-// showArgs shows the command line args for debugging
+// showArgs shows the command line args (--debug)
 func showArgs(a map[string]interface{}) {
+	fmt.Println("\nRegistered Arguments:")
 	for k, v := range a {
-		fmt.Println(k, v)
+		fmt.Printf("  %-15s %v\n", k, v)
 	}
-	os.Exit(0)
+}
+
+// showQuandlUrl shows the url used in the request (--url)
+func showQuandlUrl(show bool, url string) {
+	if show {
+		fmt.Printf("\nQuandl URL:\n%s\n\n", url)
+	}
+}
+
+// loadConfig loads a JSON config file if available
+func loadConfig(filename string) map[string]interface{} {
+	var result map[string]interface{}
+	jsonData, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return result
+	}
+	err = json.Unmarshal(jsonData, &result)
+	if err != nil {
+		log.Fatal("Error in config.json: " + err.Error())
+	}
+	return result
+}
+
+// merge combines two maps.
+// truthiness takes priority over falsiness
+// mapA takes priority over mapB
+func merge(mapA, mapB map[string]interface{}) map[string]interface{} {
+	result := make(map[string]interface{})
+	for k, v := range mapA {
+		result[k] = v
+	}
+	for k, v := range mapB {
+		if _, ok := result[k]; !ok || result[k] == nil || result[k] == false {
+			result[k] = v
+		}
+	}
+	return result
 }
 
 func panicon(err error) {
@@ -157,24 +201,36 @@ func panicon(err error) {
 	}
 }
 
+const configTemplate = `{
+	"--apikey": "YOUR_KEY",
+	"--trim_start": "2014-01-01",
+	"--per_page": "10",
+	"--url": true
+}
+`
+
 const usage = `Gondl - Command line console for Quandl
 
 Usage:
   gondl --help | -h  
   gondl --version | -v  
+  gondl --config  
   gondl get <symbol>... [options]  
   gondl list <source> [options]  
   gondl search <query> [options]  
 
-Options:  
+Standalone Options:  
   -h, --help                Show this help  
   -v, --version             Show version details  
+      --config              Create a default config.json file  
+                            You may place any of the --options in it  
 
 Global Options:  
   -k, --apikey <key>        Send this api key with the request  
   -f, --format <format>     Output as csv, json or xml [default: csv]  
   -o, --out <file>          Save to file  
   -u, --url                 Show the request URL  
+  -d, --debug               Show all registered arguments  
   -C, --cachedir <dir>      Set cache directory [default: ./cache]  
   -c, --cache <mins>        Set cache life to <mins> minutes, 0 to disable   
                             [default: 240]  

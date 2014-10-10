@@ -55,19 +55,23 @@ Get search results:
 ## Usage:
     gondl --help | -h  
     gondl --version | -v  
+    gondl --config  
     gondl get <symbol>... [options]  
     gondl list <source> [options]  
     gondl search <query> [options]  
 
-## Options:  
+## Standalone Options:  
     -h, --help                Show this help  
     -v, --version             Show version details  
+        --config              Create a default config.json file  
+                              You may place any of the --options in it  
 
 ## Global Options:  
     -k, --apikey <key>        Send this api key with the request  
     -f, --format <format>     Output as csv, json or xml [default: csv]  
     -o, --out <file>          Save to file  
     -u, --url                 Show the request URL  
+    -d, --debug               Show all registered arguments  
     -C, --cachedir <dir>      Set cache directory [default: ./cache]  
     -c, --cache <mins>        Set cache life to <mins> minutes, 0 to disable   
                               [default: 240]  
