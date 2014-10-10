@@ -68,7 +68,7 @@ Get search results:
     -o, --out <file>          Save to file  
     -u, --url                 Show the request URL  
     -C, --cachedir <dir>      Set cache directory [default: ./cache]  
-    -c, --cache <mins>        Set cache life to <min> minutes, 0 to disable   
+    -c, --cache <mins>        Set cache life to <mins> minutes, 0 to disable   
                               [default: 240]  
 
 ## Get Options:  
