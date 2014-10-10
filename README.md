@@ -17,8 +17,7 @@ It was developed in Go.
 
 ## Download Windows Binary
 
-You can download the latest build of `gondl.exe` in the 
-[releases tab](https://github.com/DannyBen/gondl/releases)
+[Download the latest build of gondl.exe](https://github.com/DannyBen/gondl/releases)
 
 
 ## Build from Source
