@@ -138,7 +138,9 @@ func quandlSetup(a map[string]interface{}) {
 
 	cacheDir := a["--cachedir"].(string)
 	cacheLife, _ := strconv.ParseFloat(a["--cache"].(string), 32)
-	quandl.CacheHandler = filecache.Handler{cacheDir, cacheLife}
+	if cacheLife > 0 {
+		quandl.CacheHandler = filecache.Handler{cacheDir, cacheLife}
+	}
 }
 
 // showArgs shows the command line args for debugging
