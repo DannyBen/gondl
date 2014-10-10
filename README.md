@@ -14,8 +14,11 @@ TODO
 
 ## Build from Source
 
-TODO
+[Install Go](https://golang.org/doc/install), then:
 
+	$ go get github.com/DannyBen/gondl
+	$ cd $GOPATH/src/github.com/DannyBen/gondl
+	$ go build
 
 ## Exampmles
 
