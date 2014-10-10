@@ -20,7 +20,7 @@ TODO
 	$ cd $GOPATH/src/github.com/DannyBen/gondl
 	$ go build
 
-## Exampmles
+## Examples
 
 Get data for Apple stock:
 
