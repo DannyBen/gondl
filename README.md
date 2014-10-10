@@ -6,6 +6,14 @@ Gondl provides command line access to the
 
 It was developed in Go.
 
+## Features
+
+* Support for getting a single or multiple symbols at once
+* Support for getting a list of symbols in a data source
+* Support for searching Quandl
+* Shows/saves JSON, CSV or XML
+* Built in local file cache
+
 
 ## Download Windows Binary
 
