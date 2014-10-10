@@ -23,15 +23,15 @@ Get data for Apple stock:
 
 	gondl get WIKI/AAPL
 
-Get 3 rows of data as JSON, and use API Key:
+Get 3 rows of data as JSON, and use an API Key:
 
 	gondl get WIKI/AAPL -r3 -fjson -kYOUR_KEY
 
-Save multiple symbols XML to file:
+Save multiple symbols as XML to a file:
 
 	gondl get WIKI/AAPL WIKI/CSCO -fxml -oOutFile.txt --rows 10
 
-Get list of symbols in a source:
+Get a list of symbols in a source:
 
 	gondl list WIKI --page 1 --per_page 10
 
