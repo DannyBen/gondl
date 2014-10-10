@@ -16,7 +16,12 @@ import (
 const version = "0.1.1"
 
 func main() {
-	arguments, _ := docopt.Parse(usage, nil, true, version, false)
+	run(nil)
+}
+
+// run is injectable main
+func run(args []string) {
+	arguments, _ := docopt.Parse(usage, args, true, version, false)
 	config := loadConfig("config.json")
 	arguments = merge(arguments, config)
 
@@ -248,4 +253,4 @@ Search/List Options:
 
 `
 
-// :)
+//;D
