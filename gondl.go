@@ -10,10 +10,11 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 )
 
-const version = "0.1.1"
+const version = "0.1.2"
 
 func main() {
 	run(nil)
@@ -51,7 +52,11 @@ func getSymbol(a map[string]interface{}) {
 	symbols := a["<symbol>"].([]string)
 
 	opts := getOptions(a, "column", "rows", "trim_start",
-		"trim_end", "sort_order")
+		"trim_end", "sort_order", "collapse", "transformation", "exclude_headers")
+
+	// if a["--exclude_headers"].(bool) {
+	// 	opts.Set("exclude_headers", "true")
+	// }
 
 	var result []byte
 	var err error
@@ -93,6 +98,8 @@ func getSearch(a map[string]interface{}) {
 	page, _ := strconv.Atoi(a["--page"].(string))
 	perPage, _ := strconv.Atoi(a["--per_page"].(string))
 
+	// TODO: Remove this patch when Quandl guys fix the bug
+	//       Also remove from quandl library
 	if format == "csv" {
 		format = "json"
 	}
@@ -115,7 +122,13 @@ func getOptions(a map[string]interface{}, names ...string) quandl.Options {
 	for _, n := range names {
 		key := string("--" + n)
 		if a[key] != nil {
-			opts.Set(n, a[key].(string))
+			if v, ok := a[key].(string); ok {
+				opts.Set(n, v)
+			} else if v, ok := a[key].(bool); ok {
+				if v {
+					opts.Set(n, "true")
+				}
+			}
 		}
 	}
 
@@ -158,8 +171,14 @@ func quandlSetup(a map[string]interface{}) {
 // showArgs shows the command line args (--debug)
 func showArgs(a map[string]interface{}) {
 	fmt.Println("\nRegistered Arguments:")
-	for k, v := range a {
-		fmt.Printf("  %-15s %v\n", k, v)
+	var keys []string
+	for k := range a {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		fmt.Printf("  %-18s %v\n", k, a[k])
 	}
 }
 
@@ -237,8 +256,8 @@ Global Options:
   -u, --url                 Show the request URL  
   -d, --debug               Show all registered arguments  
   -C, --cachedir <dir>      Set cache directory [default: ./cache]  
-  -c, --cache <mins>        Set cache life to <mins> minutes, 0 to disable   
-                            [default: 240]  
+  -c, --cache <mins>        Set cache life to <mins> minutes  
+                            0 to disable [default: 240]  
 
 Get Options:  
   -n, --column <n>          Request data column <n> only  
@@ -246,6 +265,11 @@ Get Options:
   -t, --trim_start <date>   Start data at <date>, format yyyy-mm-dd  
   -T, --trim_end <date>     End data at <date>, format yyyy-mm-dd  
   -s, --sort_order <order>  Set sort order to asc or desc  
+  -x, --exclude_headers     Exclude CSV headers  
+      --collapse <f>        Set frequency to one of: none | daily |  
+                            weekly | monthly | quarterly | annual   
+      --transformation <t>  Enable data calculation. Set to one of:  
+                            diff | rdiff | cumul | normalize  
 
 Search/List Options:  
   -p, --page <n>            Start at page <n> [default: 1]  

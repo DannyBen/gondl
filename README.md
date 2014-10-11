@@ -72,8 +72,8 @@ Get search results:
     -u, --url                 Show the request URL  
     -d, --debug               Show all registered arguments  
     -C, --cachedir <dir>      Set cache directory [default: ./cache]  
-    -c, --cache <mins>        Set cache life to <mins> minutes, 0 to disable   
-                              [default: 240]  
+    -c, --cache <mins>        Set cache life to <mins> minutes  
+                              0 to disable [default: 240]  
 
 ## Get Options:  
     -n, --column <n>          Request data column <n> only  
@@ -81,6 +81,11 @@ Get search results:
     -t, --trim_start <date>   Start data at <date>, format yyyy-mm-dd  
     -T, --trim_end <date>     End data at <date>, format yyyy-mm-dd  
     -s, --sort_order <order>  Set sort order to asc or desc  
+    -x, --exclude_headers     Exclude CSV headers  
+        --collapse <f>        Set frequency to one of: none | daily |  
+                              weekly | monthly | quarterly | annual   
+        --transformation <t>  Enable data calculation. Set to one of:  
+                              diff | rdiff | cumul | normalize  
 
 ## Search/List Options:  
     -p, --page <n>            Start at page <n> [default: 1]  
