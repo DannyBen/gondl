@@ -53,7 +53,7 @@ func getSymbol(a map[string]interface{}) {
 
 	opts := getOptions(a, "column", "rows", "trim_start",
 		"trim_end", "sort_order", "collapse", "transformation",
-		"exclude_headers")
+		"exclude_headers", "exclude_data")
 
 	var result []byte
 	var err error
@@ -263,6 +263,7 @@ Get Options:
   -T, --trim_end <date>     End data at <date>, format yyyy-mm-dd  
   -s, --sort_order <order>  Set sort order to asc or desc  
   -x, --exclude_headers     Exclude CSV headers  
+      --exclude_data        Get meta data only (JSON/XML format)  
       --collapse <f>        Set frequency to one of: none | daily |  
                             weekly | monthly | quarterly | annual   
       --transformation <t>  Enable data calculation. Set to one of:  
