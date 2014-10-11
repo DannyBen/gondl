@@ -52,11 +52,8 @@ func getSymbol(a map[string]interface{}) {
 	symbols := a["<symbol>"].([]string)
 
 	opts := getOptions(a, "column", "rows", "trim_start",
-		"trim_end", "sort_order", "collapse", "transformation", "exclude_headers")
-
-	// if a["--exclude_headers"].(bool) {
-	// 	opts.Set("exclude_headers", "true")
-	// }
+		"trim_end", "sort_order", "collapse", "transformation",
+		"exclude_headers")
 
 	var result []byte
 	var err error
