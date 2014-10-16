@@ -1,3 +1,4 @@
+// Command Gondl provides command line access to Quandl API
 package main
 
 import (
