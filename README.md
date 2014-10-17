@@ -24,7 +24,7 @@ It was developed in Go.
 
 ## Build from Source (All Platforms)
 
-To build from source on Windows, Linux or Mac, 
+To build from source on Windows, Linux or Mac - 
 [Install Go](https://golang.org/doc/install), then:
 
 	$ go get github.com/DannyBen/gondl
