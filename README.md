@@ -22,8 +22,9 @@ It was developed in Go.
 [Download the latest build of gondl.exe](https://github.com/DannyBen/gondl/releases)
 
 
-## Build from Source
+## Build from Source (All Platforms)
 
+To build from source on Windows, Linux or Mac, 
 [Install Go](https://golang.org/doc/install), then:
 
 	$ go get github.com/DannyBen/gondl
