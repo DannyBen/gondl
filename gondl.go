@@ -15,7 +15,7 @@ import (
 	"strconv"
 )
 
-const version = "0.1.2"
+const version = "0.1.3"
 
 func main() {
 	run(nil)
@@ -25,7 +25,7 @@ func main() {
 func run(args []string) {
 	arguments, _ := docopt.Parse(usage, args, true, version, false)
 	config := loadConfig("config.json")
-	arguments = merge(arguments, config)
+	arguments = merge(config, arguments)
 
 	switch {
 	case arguments["--config"] != false:
