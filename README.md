@@ -63,10 +63,10 @@ Get search results:
     gondl search <query> [options]  
 
 ## Standalone Options:  
-    -h, --help                Show this help  
-    -v, --version             Show version details  
-        --config              Create a default config.json file  
-                              You may place any of the --options in it  
+    -h, --help                Show this help.  
+    -v, --version             Show version details.  
+        --config              Create a default gondl.json file and  
+                              show additional config help.  
 
 ## Global Options:  
     -k, --apikey <key>        Send this api key with the request  
@@ -92,5 +92,5 @@ Get search results:
                               diff | rdiff | cumul | normalize  
 
 ## Search/List Options:  
-    -p, --page <n>            Start at page <n> [default: 1]  
-    -P, --per_page <n>        Show <n> results per page [default: 300]  
+    -p, --page <n>            Start at page <n> (default: 1)  
+    -P, --per_page <n>        Show <n> results per page (default: 300)  

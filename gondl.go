@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-const version = "0.1.3"
+const version = "0.1.4"
 
 func main() {
 	run(nil)
@@ -200,7 +200,7 @@ Standalone Options:
   -h, --help                Show this help.  
   -v, --version             Show version details.  
       --config              Create a default gondl.json file and  
-                            show additional config help.                            
+                            show additional config help.  
 
 Global Options:  
   -k, --apikey <key>        Send this api key with the request  
