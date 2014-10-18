@@ -10,10 +10,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"os/user"
 	"sort"
 	"strconv"
-	"strings"
 )
 
 const version = "0.1.4"
@@ -155,7 +153,6 @@ func quandlSetup(a map[string]interface{}) {
 	}
 
 	cacheDir := a["--cachedir"].(string)
-	cacheDir = resolveHomeDir(cacheDir)
 	cacheLife, _ := strconv.ParseFloat(a["--cache"].(string), 32)
 	if cacheLife > 0 {
 		quandl.CacheHandler = filecache.Handler{cacheDir, cacheLife}
@@ -181,18 +178,6 @@ func showQuandlUrl(show bool, url string) {
 	if show {
 		fmt.Printf("\nQuandl URL:\n%s\n\n", url)
 	}
-}
-
-// resolveHomeDir replaces ~ with the users home directory
-func resolveHomeDir(path string) string {
-	if strings.HasPrefix(path, "~") {
-		usr, err := user.Current()
-		if err != nil {
-			return path
-		}
-		return usr.HomeDir + strings.TrimPrefix(path, "~")
-	}
-	return path
 }
 
 func panicon(err error) {
