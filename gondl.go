@@ -7,28 +7,23 @@ import (
 	"fmt"
 	"github.com/DannyBen/filecache"
 	"github.com/DannyBen/quandl"
-	"github.com/docopt/docopt-go"
 	"io/ioutil"
 	"log"
 	"os"
-	"os/user"
-	"path/filepath"
 	"sort"
 	"strconv"
 )
 
 const version = "0.1.3"
 
-type Config map[string]interface{}
-
 func main() {
-	run([]string{"--debug", "-kCMD"})
+	run(nil)
 }
 
 // run is injectable main
 func run(args []string) {
-	arguments, _ := docopt.Parse(usage, args, true, version, false)
-	arguments = ammendConfig(arguments)
+	config := NewConfig(usage, args, version)
+	arguments := config.Values
 
 	switch {
 	case arguments["--config"] != false:
@@ -48,7 +43,7 @@ func run(args []string) {
 
 // getSymbol downloads symbol data from Quandl and
 // outputs it to stdout or file
-func getSymbol(a Config) {
+func getSymbol(a map[string]interface{}) {
 	quandlSetup(a)
 
 	format := a["--format"].(string)
@@ -74,7 +69,7 @@ func getSymbol(a Config) {
 
 // getList downloads list of symbols for a given source
 // and outputs it to stdout or file
-func getList(a Config) {
+func getList(a map[string]interface{}) {
 	quandlSetup(a)
 	source := a["<source>"].(string)
 	format := a["--format"].(string)
@@ -91,7 +86,7 @@ func getList(a Config) {
 
 // getSearch downloads search results given query and
 // outputs it to stdout or file
-func getSearch(a Config) {
+func getSearch(a map[string]interface{}) {
 	quandlSetup(a)
 	query := a["<query>"].(string)
 	format := a["--format"].(string)
@@ -112,20 +107,8 @@ func getSearch(a Config) {
 	showQuandlUrl(showUrl, quandl.LastUrl)
 }
 
-// makeConfig creates a default config.json template file
-func makeConfig() {
-	ioutil.WriteFile("gondl.json", []byte(configTemplate), 0644)
-	usr, err := user.Current()
-	panicon(err)
-	fmt.Println()
-	fmt.Printf(configHelp,
-		myPath()+string(filepath.Separator)+"gondl.json",
-		usr.HomeDir+string(filepath.Separator)+"gondl.json",
-	)
-}
-
 // getOptions converts command line flags to quandl query string options
-func getOptions(a Config, names ...string) quandl.Options {
+func getOptions(a map[string]interface{}, names ...string) quandl.Options {
 	opts := quandl.Options{}
 	for _, n := range names {
 		key := string("--" + n)
@@ -144,7 +127,7 @@ func getOptions(a Config, names ...string) quandl.Options {
 }
 
 // output sends formatted output to stdout
-func output(a Config, result []byte, format string) {
+func output(a map[string]interface{}, result []byte, format string) {
 	outfile := a["--out"]
 
 	var out bytes.Buffer
@@ -164,7 +147,7 @@ func output(a Config, result []byte, format string) {
 }
 
 // quandlSetup configures the quandl object before each call
-func quandlSetup(a Config) {
+func quandlSetup(a map[string]interface{}) {
 	if a["--apikey"] != nil {
 		quandl.ApiKey = a["--apikey"].(string)
 	}
@@ -177,7 +160,7 @@ func quandlSetup(a Config) {
 }
 
 // showArgs shows the command line args (--debug)
-func showArgs(a Config) {
+func showArgs(a map[string]interface{}) {
 	fmt.Println("\nRegistered Arguments:")
 	var keys []string
 	for k := range a {
@@ -197,84 +180,11 @@ func showQuandlUrl(show bool, url string) {
 	}
 }
 
-func ammendConfig(a Config) Config {
-	config := loadConfig("gondl.json")
-	result := merge(a, config)
-	if result["--cachedir"] == nil {
-		result["--cachedir"] = "./cache"
-	}
-	if result["--cache"] == nil {
-		result["--cache"] = 240
-	}
-	if result["--page"] == nil {
-		result["--page"] = 1
-	}
-	if result["--per_page"] == nil {
-		result["--per_page"] = 300
-	}
-	if result["--format"] == nil {
-		result["--format"] = "csv"
-	}
-	return result
-}
-
-// loadConfig loads a JSON config file if available
-func loadConfig(filename string) Config {
-	var result map[string]interface{}
-	jsonData, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return result
-	}
-	err = json.Unmarshal(jsonData, &result)
-	if err != nil {
-		log.Fatal("Error in config.json: " + err.Error())
-	}
-	return result
-}
-
-// merge combines two maps.
-// truthiness takes priority over falsiness
-// mapA takes priority over mapB
-func merge(mapA, mapB Config) Config {
-	result := make(Config)
-	for k, v := range mapA {
-		result[k] = v
-	}
-	for k, v := range mapB {
-		if _, ok := result[k]; !ok || result[k] == nil || result[k] == false {
-			result[k] = v
-		}
-	}
-	return result
-}
-
-func myPath() string {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
-	panicon(err)
-	return dir
-}
-
 func panicon(err error) {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 }
-
-const configTemplate = `{
-	"--apikey": "YOUR_KEY",
-	"--trim_start": "2014-01-01",
-	"--per_page": "10",
-	"--url": true
-}
-`
-
-const configHelp = `Sample config file created here:
-%v
-
-Gondl will also look for 'gondl.json' in your home directory:
-%v
-
-`
 
 const usage = `Gondl - Command line console for Quandl
 
@@ -282,7 +192,6 @@ Usage:
   gondl --help | -h  
   gondl --version | -v  
   gondl --config  
-  gondl --debug [options]  
   gondl get <symbol>... [options]  
   gondl list <source> [options]  
   gondl search <query> [options]  
@@ -290,8 +199,8 @@ Usage:
 Standalone Options:  
   -h, --help                Show this help.  
   -v, --version             Show version details.  
-      --config              Create a default gondl.json file.  
-                            You may place any of the --options in it.  
+      --config              Create a default gondl.json file and  
+                            show additional config help.                            
 
 Global Options:  
   -k, --apikey <key>        Send this api key with the request  
