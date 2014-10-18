@@ -55,9 +55,7 @@ Get search results:
 
 
 ## Usage:
-Gondl - Command line console for Quandl
 
-## Usage:
     gondl --help | -h  
     gondl --version | -v  
     gondl --config  
@@ -65,13 +63,15 @@ Gondl - Command line console for Quandl
     gondl list <source> [options]  
     gondl search <query> [options]  
 
-Standalone Options:  
+## Standalone Options:  
+
     -h, --help                Show this help.  
     -v, --version             Show version details.  
         --config              Create a default gondl.json file and  
                               show additional config help.  
 
-Global Options:  
+## Global Options:  
+
     -k, --apikey <key>        Send this api key with the request  
     -f, --format <format>     Output as csv, json or xml (default: csv)  
     -o, --out <file>          Save to file  
@@ -81,7 +81,8 @@ Global Options:
     -c, --cache <mins>        Set cache life to <mins> minutes  
                               0 to disable (default: 240)  
 
-Get Options:  
+## Get Options:  
+
     -n, --column <n>          Request data column <n> only  
     -r, --rows <n>            Request <n> rows  
     -t, --trim_start <date>   Start data at <date>, format yyyy-mm-dd  
@@ -94,6 +95,8 @@ Get Options:
         --transformation <t>  Enable data calculation. Set to one of:  
                               diff | rdiff | cumul | normalize  
 
-Search/List Options:  
+## Search/List Options:  
+
     -p, --page <n>            Start at page <n> (default: 1)  
     -P, --per_page <n>        Show <n> results per page (default: 300)  
+
