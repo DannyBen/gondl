@@ -11,21 +11,24 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/user"
+	"path/filepath"
 	"sort"
 	"strconv"
 )
 
 const version = "0.1.3"
 
+type Config map[string]interface{}
+
 func main() {
-	run(nil)
+	run([]string{"--debug", "-kCMD"})
 }
 
 // run is injectable main
 func run(args []string) {
 	arguments, _ := docopt.Parse(usage, args, true, version, false)
-	config := loadConfig("config.json")
-	arguments = merge(config, arguments)
+	arguments = ammendConfig(arguments)
 
 	switch {
 	case arguments["--config"] != false:
@@ -45,7 +48,7 @@ func run(args []string) {
 
 // getSymbol downloads symbol data from Quandl and
 // outputs it to stdout or file
-func getSymbol(a map[string]interface{}) {
+func getSymbol(a Config) {
 	quandlSetup(a)
 
 	format := a["--format"].(string)
@@ -71,7 +74,7 @@ func getSymbol(a map[string]interface{}) {
 
 // getList downloads list of symbols for a given source
 // and outputs it to stdout or file
-func getList(a map[string]interface{}) {
+func getList(a Config) {
 	quandlSetup(a)
 	source := a["<source>"].(string)
 	format := a["--format"].(string)
@@ -88,7 +91,7 @@ func getList(a map[string]interface{}) {
 
 // getSearch downloads search results given query and
 // outputs it to stdout or file
-func getSearch(a map[string]interface{}) {
+func getSearch(a Config) {
 	quandlSetup(a)
 	query := a["<query>"].(string)
 	format := a["--format"].(string)
@@ -111,11 +114,18 @@ func getSearch(a map[string]interface{}) {
 
 // makeConfig creates a default config.json template file
 func makeConfig() {
-	ioutil.WriteFile("config.json", []byte(configTemplate), 0644)
+	ioutil.WriteFile("gondl.json", []byte(configTemplate), 0644)
+	usr, err := user.Current()
+	panicon(err)
+	fmt.Println()
+	fmt.Printf(configHelp,
+		myPath()+string(filepath.Separator)+"gondl.json",
+		usr.HomeDir+string(filepath.Separator)+"gondl.json",
+	)
 }
 
 // getOptions converts command line flags to quandl query string options
-func getOptions(a map[string]interface{}, names ...string) quandl.Options {
+func getOptions(a Config, names ...string) quandl.Options {
 	opts := quandl.Options{}
 	for _, n := range names {
 		key := string("--" + n)
@@ -134,7 +144,7 @@ func getOptions(a map[string]interface{}, names ...string) quandl.Options {
 }
 
 // output sends formatted output to stdout
-func output(a map[string]interface{}, result []byte, format string) {
+func output(a Config, result []byte, format string) {
 	outfile := a["--out"]
 
 	var out bytes.Buffer
@@ -154,7 +164,7 @@ func output(a map[string]interface{}, result []byte, format string) {
 }
 
 // quandlSetup configures the quandl object before each call
-func quandlSetup(a map[string]interface{}) {
+func quandlSetup(a Config) {
 	if a["--apikey"] != nil {
 		quandl.ApiKey = a["--apikey"].(string)
 	}
@@ -167,7 +177,7 @@ func quandlSetup(a map[string]interface{}) {
 }
 
 // showArgs shows the command line args (--debug)
-func showArgs(a map[string]interface{}) {
+func showArgs(a Config) {
 	fmt.Println("\nRegistered Arguments:")
 	var keys []string
 	for k := range a {
@@ -187,8 +197,29 @@ func showQuandlUrl(show bool, url string) {
 	}
 }
 
+func ammendConfig(a Config) Config {
+	config := loadConfig("gondl.json")
+	result := merge(a, config)
+	if result["--cachedir"] == nil {
+		result["--cachedir"] = "./cache"
+	}
+	if result["--cache"] == nil {
+		result["--cache"] = 240
+	}
+	if result["--page"] == nil {
+		result["--page"] = 1
+	}
+	if result["--per_page"] == nil {
+		result["--per_page"] = 300
+	}
+	if result["--format"] == nil {
+		result["--format"] = "csv"
+	}
+	return result
+}
+
 // loadConfig loads a JSON config file if available
-func loadConfig(filename string) map[string]interface{} {
+func loadConfig(filename string) Config {
 	var result map[string]interface{}
 	jsonData, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -204,8 +235,8 @@ func loadConfig(filename string) map[string]interface{} {
 // merge combines two maps.
 // truthiness takes priority over falsiness
 // mapA takes priority over mapB
-func merge(mapA, mapB map[string]interface{}) map[string]interface{} {
-	result := make(map[string]interface{})
+func merge(mapA, mapB Config) Config {
+	result := make(Config)
 	for k, v := range mapA {
 		result[k] = v
 	}
@@ -215,6 +246,12 @@ func merge(mapA, mapB map[string]interface{}) map[string]interface{} {
 		}
 	}
 	return result
+}
+
+func myPath() string {
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	panicon(err)
+	return dir
 }
 
 func panicon(err error) {
@@ -231,31 +268,40 @@ const configTemplate = `{
 }
 `
 
+const configHelp = `Sample config file created here:
+%v
+
+Gondl will also look for 'gondl.json' in your home directory:
+%v
+
+`
+
 const usage = `Gondl - Command line console for Quandl
 
 Usage:
   gondl --help | -h  
   gondl --version | -v  
   gondl --config  
+  gondl --debug [options]  
   gondl get <symbol>... [options]  
   gondl list <source> [options]  
   gondl search <query> [options]  
 
 Standalone Options:  
-  -h, --help                Show this help  
-  -v, --version             Show version details  
-      --config              Create a default config.json file  
-                            You may place any of the --options in it  
+  -h, --help                Show this help.  
+  -v, --version             Show version details.  
+      --config              Create a default gondl.json file.  
+                            You may place any of the --options in it.  
 
 Global Options:  
   -k, --apikey <key>        Send this api key with the request  
-  -f, --format <format>     Output as csv, json or xml [default: csv]  
+  -f, --format <format>     Output as csv, json or xml (default: csv)  
   -o, --out <file>          Save to file  
   -u, --url                 Show the request URL  
   -d, --debug               Show all registered arguments  
-  -C, --cachedir <dir>      Set cache directory [default: ./cache]  
+  -C, --cachedir <dir>      Set cache directory (default: ./cache)  
   -c, --cache <mins>        Set cache life to <mins> minutes  
-                            0 to disable [default: 240]  
+                            0 to disable (default: 240)  
 
 Get Options:  
   -n, --column <n>          Request data column <n> only  
@@ -271,8 +317,8 @@ Get Options:
                             diff | rdiff | cumul | normalize  
 
 Search/List Options:  
-  -p, --page <n>            Start at page <n> [default: 1]  
-  -P, --per_page <n>        Show <n> results per page [default: 300]  
+  -p, --page <n>            Start at page <n> (default: 1)  
+  -P, --per_page <n>        Show <n> results per page (default: 300)  
 
 `
 
