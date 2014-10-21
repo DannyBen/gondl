@@ -8,7 +8,7 @@ import (
 )
 
 func Example_GetSimple() {
-	run([]string{"get", "WIKI/CSCO", "-n4", "-t2014-01-01", "-T2014-01-04", "-c0"})
+	run([]string{"get", "WIKI/CSCO", "-c4", "-t2014-01-01", "-T2014-01-04", "-C0"})
 	// Output:
 	// Date,Close
 	// 2014-01-03,21.98
@@ -16,14 +16,14 @@ func Example_GetSimple() {
 }
 
 func Example_GetMulti() {
-	run([]string{"get", "WIKI/AAPL.4", "WIKI/MSFT.4", "-t2014-01-01", "-T2014-01-04", "-x", "-c0"})
+	run([]string{"get", "WIKI/AAPL.4", "WIKI/MSFT.4", "-t2014-01-01", "-T2014-01-04", "-x", "-C0"})
 	// Output:
 	// 2014-01-03,540.98,36.91
 	// 2014-01-02,553.13,37.16
 }
 
 func Example_GetCollapse() {
-	run([]string{"get", "WIKI/AAPL", "-t2014-01-01", "-T2014-02-01", "-x", "-n4", "--collapse=weekly", "-c0"})
+	run([]string{"get", "WIKI/AAPL", "-t2014-01-01", "-T2014-02-01", "-x", "-c4", "--collapse=weekly", "-C0"})
 	// Output:
 	// 2014-02-02,500.6
 	// 2014-01-26,546.07
@@ -33,7 +33,7 @@ func Example_GetCollapse() {
 }
 
 func Example_GetTransformation() {
-	run([]string{"get", "WIKI/MSFT", "-t2014-01-01", "-T2014-01-10", "-sasc", "-n4", "--transformation=normalize", "-c0"})
+	run([]string{"get", "WIKI/MSFT", "-t2014-01-01", "-T2014-01-10", "-sasc", "-c4", "--transformation=normalize", "-C0"})
 	// Output:
 	// Date,Close
 	// 2014-01-02,100.0
@@ -46,7 +46,7 @@ func Example_GetTransformation() {
 }
 
 func Example_GetFile() {
-	run([]string{"get", "WIKI/AAPL", "-n4", "-t2014-01-01", "-T2014-01-04", "-otmp", "-sasc", "-c0"})
+	run([]string{"get", "WIKI/AAPL", "-c4", "-t2014-01-01", "-T2014-01-04", "-otmp", "-sasc", "-C0"})
 	data, _ := ioutil.ReadFile("tmp")
 	os.Remove("tmp")
 	fmt.Println(string(data))
@@ -57,7 +57,7 @@ func Example_GetFile() {
 }
 
 func Example_List() {
-	run([]string{"list", "WIKI", "-P2", "-fjson", "-otmp", "-c0"})
+	run([]string{"list", "WIKI", "-P2", "-fjson", "-otmp", "-C0"})
 	data, _ := ioutil.ReadFile("tmp")
 	os.Remove("tmp")
 	var r map[string]interface{}
@@ -73,7 +73,7 @@ func Example_List() {
 }
 
 func Example_Search() {
-	run([]string{"search", "nasdaq composite", "-P3", "-fjson", "-otmp", "-c0"})
+	run([]string{"search", "nasdaq composite", "-P3", "-fjson", "-otmp", "-C0"})
 	data, _ := ioutil.ReadFile("tmp")
 	os.Remove("tmp")
 	var r map[string]interface{}

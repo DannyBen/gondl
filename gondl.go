@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-const version = "0.1.4"
+const version = "0.1.5"
 
 func main() {
 	run(nil)
@@ -208,12 +208,12 @@ Global Options:
   -o, --out <file>          Save to file  
   -u, --url                 Show the request URL  
   -d, --debug               Show all registered arguments  
-  -C, --cachedir <dir>      Set cache directory (default: ./cache)  
-  -c, --cache <mins>        Set cache life to <mins> minutes  
+  -D, --cachedir <dir>      Set cache directory (default: ./cache)  
+  -C, --cache <mins>        Set cache life to <mins> minutes  
                             0 to disable (default: 240)  
 
 Get Options:  
-  -n, --column <n>          Request data column <n> only  
+  -c, --column <n>          Request data column <n> only  
   -r, --rows <n>            Request <n> rows  
   -t, --trim_start <date>   Start data at <date>, format yyyy-mm-dd  
   -T, --trim_end <date>     End data at <date>, format yyyy-mm-dd  
