@@ -100,3 +100,8 @@ Get search results:
     -p, --page <n>            Start at page <n> (default: 1)  
     -P, --per_page <n>        Show <n> results per page (default: 300)  
 
+## Todo
+
+* Make --config only display config paths instead of create.
+* Make --config show all values received from config files
+* Add --make-config to create config file

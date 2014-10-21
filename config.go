@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bitbucket.org/kardianos/osext"
 	"encoding/json"
 	"fmt"
 	"github.com/docopt/docopt-go"
@@ -85,9 +86,10 @@ func merge(mapA, mapB map[string]interface{}) map[string]interface{} {
 
 // localDirConfig returns the path to the local config file
 func localDirConfig() string {
-	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	// dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	dir, err := osext.ExecutableFolder()
 	panicon(err)
-	return dir + string(filepath.Separator) + configName
+	return dir + configName
 }
 
 // workingDirConfig returns the path working directory config file
