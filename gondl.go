@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-const version = "0.1.6"
+const version = "0.1.7"
 
 func main() {
 	run(nil)
@@ -26,8 +26,10 @@ func run(args []string) {
 	arguments := config.Values
 
 	switch {
-	case arguments["--config"] != false:
+	case arguments["--make-config"] != false:
 		makeConfig()
+	case arguments["--config"] != false:
+		showConfig()
 	case arguments["get"] != false:
 		getSymbol(arguments)
 	case arguments["list"] != false:
@@ -191,7 +193,8 @@ const usage = `Gondl - Command line console for Quandl
 Usage:
   gondl --help | -h  
   gondl --version | -v  
-  gondl --config  
+  gondl --config [options]  
+  gondl --make-config  
   gondl get <symbol>... [options]  
   gondl list <source> [options]  
   gondl search <query> [options]  
@@ -199,8 +202,8 @@ Usage:
 Standalone Options:  
   -h, --help                Show this help.  
   -v, --version             Show version details.  
-      --config              Create a default gondl.json file and  
-                            show additional config help.  
+      --config              Show config files location and info.  
+      --make-config         Create a default gondl.json file.  
 
 Global Options:  
   -k, --apikey <key>        Send this api key with the request  

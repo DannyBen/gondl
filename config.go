@@ -92,7 +92,8 @@ func localDirConfig() string {
 	return dir + configName
 }
 
-// workingDirConfig returns the path working directory config file
+// workingDirConfig returns the path to the working directory config
+// file
 func workingDirConfig() string {
 	dir, err := os.Getwd()
 	panicon(err)
@@ -112,7 +113,7 @@ func homeDirConfig() string {
 func makeConfig() {
 	file := workingDirConfig()
 	msg := "Sample config file created here"
-	if _, err := os.Stat(file); err == nil {
+	if exist(file) {
 		msg = "Config file already exists"
 	} else {
 		err := ioutil.WriteFile(file, []byte(configTemplate), 0644)
@@ -120,7 +121,33 @@ func makeConfig() {
 			msg = "Error - cannot create config file"
 		}
 	}
-	fmt.Printf(configHelp, msg, file, file, homeDirConfig(), localDirConfig())
+	fmt.Printf(configHelp, msg, file)
+}
+
+// showConfig shows information about the config files.
+func showConfig() {
+	f1, f2, f3 := "Not Found", "Not Found", "Not Found"
+	if exist(workingDirConfig()) {
+		f1 = "Found"
+	}
+	if exist(homeDirConfig()) {
+		f2 = "Found"
+	}
+	if exist(localDirConfig()) {
+		f3 = "Found"
+	}
+	fmt.Printf(configInfo,
+		f1, workingDirConfig(),
+		f2, homeDirConfig(),
+		f3, localDirConfig(),
+	)
+}
+
+func exist(file string) bool {
+	if _, err := os.Stat(file); err == nil {
+		return true
+	}
+	return false
 }
 
 const configTemplate = `{
@@ -138,11 +165,26 @@ You may edit it and use any of the long-form options (--options) in
 it. The arguments you provide in the command line override any argument
 in any of the config files.
 
-Gondl will look for config files in this order:
+Run 'gondl --config' for more information about config files.
+`
 
-Working Directory: %v
-User Directory   : %v
-Local Directory  : %v
+const configInfo = `
+Gondl will look for config files in three folders. The working 
+directory, the user's home directory and the local (executable's) 
+directory.
+
+Values in the working directory will have precedence over values in 
+the home directory, and values in the home directory 
+will have precedence over values in the local directory.
+
+  Working Directory: (%v)
+  %v
+
+  User Directory: (%v)
+  %v
+
+  Local Directory: (%v)
+  %v
 
 `
 
