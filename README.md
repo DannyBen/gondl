@@ -10,9 +10,9 @@ It was developed in Go.
 
 ## Features
 
-* Support for getting a single or multiple symbols at once
-* Support for getting a list of symbols in a data source
-* Support for searching Quandl
+* Get data for a symbol
+* Get a list of symbols in a data source
+* Search the entire Quandl database
 * Shows/saves JSON, CSV or XML
 * Built in local file cache
 
@@ -41,9 +41,9 @@ Get 3 rows of data as JSON, and use an API Key:
 
 	gondl get WIKI/AAPL -r3 -fjson -kYOUR_KEY
 
-Save multiple symbols as XML to a file:
+Save data as XML to a file:
 
-	gondl get WIKI/AAPL WIKI/CSCO -fxml -oOutFile.txt --rows 10
+	gondl get WIKI/CSCO -fxml -oOutFile.txt --rows 10
 
 Get a list of symbols in a source:
 
@@ -60,7 +60,7 @@ Get search results:
     gondl --version | -v  
     gondl --config [options]  
     gondl --make-config  
-    gondl get <symbol>... [options]  
+    gondl get <symbol> [options]  
     gondl list <source> [options]  
     gondl search <query> [options]  
 

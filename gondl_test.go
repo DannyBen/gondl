@@ -15,13 +15,6 @@ func Example_GetSimple() {
 	// 2014-01-02,22.0
 }
 
-func Example_GetMulti() {
-	run([]string{"get", "WIKI/AAPL.4", "WIKI/MSFT.4", "-t2014-01-01", "-T2014-01-04", "-x", "-C0"})
-	// Output:
-	// 2014-01-03,540.98,36.91
-	// 2014-01-02,553.13,37.16
-}
-
 func Example_GetCollapse() {
 	run([]string{"get", "WIKI/AAPL", "-t2014-01-01", "-T2014-02-01", "-x", "-c4", "--collapse=weekly", "-C0"})
 	// Output:

@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-const version = "0.1.8"
+const version = "0.2.0"
 
 func main() {
 	run(nil)
@@ -50,7 +50,7 @@ func getSymbol(a map[string]interface{}) {
 
 	format := a["--format"].(string)
 	showUrl := a["--url"].(bool)
-	symbols := a["<symbol>"].([]string)
+	symbol := a["<symbol>"].(string)
 
 	opts := getOptions(a, "column", "rows", "trim_start",
 		"trim_end", "sort_order", "collapse", "transformation",
@@ -58,11 +58,7 @@ func getSymbol(a map[string]interface{}) {
 
 	var result []byte
 	var err error
-	if len(symbols) == 1 {
-		result, err = quandl.GetSymbolRaw(symbols[0], format, opts)
-	} else {
-		result, err = quandl.GetSymbolsRaw(symbols, format, opts)
-	}
+	result, err = quandl.GetSymbolRaw(symbol, format, opts)
 	panicon(err)
 
 	output(a, result, format)
@@ -195,7 +191,7 @@ Usage:
   gondl --version | -v  
   gondl --config [options]  
   gondl --make-config  
-  gondl get <symbol>... [options]  
+  gondl get <symbol> [options]  
   gondl list <source> [options]  
   gondl search <query> [options]  
 
