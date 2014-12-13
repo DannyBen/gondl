@@ -14,7 +14,7 @@ import (
 	"strconv"
 )
 
-const version = "0.1.7"
+const version = "0.1.8"
 
 func main() {
 	run(nil)
@@ -128,7 +128,7 @@ func getOptions(a map[string]interface{}, names ...string) quandl.Options {
 	return opts
 }
 
-// output sends formatted output to stdout
+// output sends formatted output to stdout or file
 func output(a map[string]interface{}, result []byte, format string) {
 	outfile := a["--out"]
 
