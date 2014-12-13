@@ -56,9 +56,7 @@ func getSymbol(a map[string]interface{}) {
 		"trim_end", "sort_order", "collapse", "transformation",
 		"exclude_headers", "exclude_data")
 
-	var result []byte
-	var err error
-	result, err = quandl.GetSymbolRaw(symbol, format, opts)
+	result, err := quandl.GetSymbolRaw(symbol, format, opts)
 	panicon(err)
 
 	output(a, result, format)
