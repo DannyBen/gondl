@@ -58,7 +58,7 @@ func Example_List() {
 
 	countTest := r["total_count"].(float64) > 2000
 	lenTest := len(r["docs"].([]interface{}))
-	sourceTest := r["sources"].([]interface{})[0].(map[string]interface{})["id"]
+	sourceTest := r["docs"].([]interface{})[0].(map[string]interface{})["source_id"]
 
 	fmt.Println(countTest, lenTest, sourceTest)
 	// Output:
