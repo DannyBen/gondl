@@ -1,7 +1,7 @@
 Gondl - Command line console for Quandl
 =======================================
 
-[![Build Status](https://travis-ci.org/DannyBen/gondl.svg?branch=master)](https://travis-ci.org/DannyBen/gondl)
+<!-- [![Build Status](https://travis-ci.org/DannyBen/gondl.svg?branch=master)](https://travis-ci.org/DannyBen/gondl) -->
 
 Gondl provides command line access to the 
 [Quandl API](https://www.quandl.com/help/api).
